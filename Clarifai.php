@@ -1,5 +1,46 @@
 <?php
 	class Clarifai {
+
+		public static function get_multi_tags(array $url, $auth) {
+			$mh = curl_multi_init();
+			$header = 'Authorization: Bearer ' . $auth;
+			 
+			foreach($url as $key => $links) {
+				for($i = 0; $i < count($links); $i++) {
+					$ch[$key][$i] = curl_init();
+
+					curl_setopt($ch[$key][$i], CURLOPT_URL, "https://api.clarifai.com/v1/tag/?url=" . $links[$i]); 
+					curl_setopt($ch[$key][$i], CURLOPT_HTTPHEADER, array(
+						$header
+					));
+					curl_setopt($ch[$key][$i], CURLOPT_RETURNTRANSFER, true);
+
+					//add the two handles
+					curl_multi_add_handle($mh, $ch[$key][$i]);
+				}
+			}
+
+			$running = null;
+			do {
+				curl_multi_exec($mh, $running);
+			} while($running > 0);
+
+			$ret = array();
+			foreach($url as $key => $links) {
+				$tags = array();
+				for($i = 0; $i < count($links); $i++) {
+					array_push($tags, json_decode(curl_multi_getcontent($ch[$key][$i]))->results[0]->result->tag->classes);
+
+					//close the handles
+					curl_multi_remove_handle($mh, $ch[$key][$i]);
+				}
+				$ret[$key] = $tags;
+			}
+
+			curl_multi_close($mh);
+			return $ret;
+		}
+
 		public static function get_tags($url, $auth) {
 			$ch_result = curl_init();
 		    $header = 'Authorization: Bearer ' . $auth;
