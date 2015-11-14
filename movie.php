@@ -13,7 +13,6 @@
 
 	$ch_scrape = curl_init('https://www.tastekid.com/movies/like/' . urlencode($query_name));
 	curl_setopt($ch_scrape, CURLOPT_RETURNTRANSFER, true);
-	//curl_setopt(... other options you want...)
 
 	$html = curl_exec($ch_scrape);
 
@@ -26,7 +25,7 @@
 	if($status == 200)
 	{
 		preg_match_all('/<span class="tk-Resource-title">(.*)<\/span>/', $html, $matches);
-		$matches = array_slice($matches[0], 1, 10);
+		$matches = array_slice($matches[0], 1, 5);
 	}
 	else
 	{
@@ -39,12 +38,10 @@
     {
         $match_search = new Search($match);
         $links[$match] = $match_search->get_links();
-        //$tags = $match_search->get_tags($auth);
-        //$results[$match] = sizeof(array_intersect($query_tags, $tags));
     }
-    $tags_array = Clarifai::get_multi_tags($links, $auth);
+    $tags_array = Clarifai::get_unique_tags($links, $auth);
     $results = array();
-    foreach (array_slice($tags_array, 1, 10) as $key => $tags) {
+    foreach (array_slice($tags_array, 1, 5) as $key => $tags) {
         $results[$key] = count(array_intersect($tags, $tags_array[$query_name]));
     }
     arsort($results);
