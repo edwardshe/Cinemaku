@@ -1,29 +1,16 @@
 <?php
 	require_once("pass.php");
 	require_once("Clarifai.php");
-    require_once("GImages.php");
+    require_once("Search.php");
+
+    $start = microtime(true);
 
     $auth = Clarifai::get_auth($client_id, $client_secret);
 
-    $still_search = new GImages("The Social Network");
-    $still_urls = $still_search->get_links();
+    $query = new Search("The Social Network");
+    $query_tags = $query->get_tags($auth);
 
-    $query_tags = array();
-    foreach($still_urls as $still_url) {
-        $tags = Clarifai::get_tags($still_url, $auth);
-        if (is_array($tags)) {
-            foreach($tags as $tag) {
-                if (!in_array($tag, $query_tags))
-                {
-                    $query_tags[] = $tag;
-                }
-            }
-        }
-    }
-
-    var_dump($query_tags);
-
-	$ch_scrape = curl_init('https://www.tastekid.com/movies/like/Dog-Day-Afternoon');
+	$ch_scrape = curl_init('https://www.tastekid.com/movies/like/Step-Brothers');
 	curl_setopt($ch_scrape, CURLOPT_RETURNTRANSFER, true);
 	//curl_setopt(... other options you want...)
 
@@ -38,12 +25,22 @@
 	if($status == 200)
 	{
 		preg_match_all('/<span class="tk-Resource-title">(.*)<\/span>/', $html, $matches);
-		//var_dump($matches);
+		$matches = array_slice($matches[0], 1, 5);
 	}
 	else
 	{
 		echo "Connection failed.";
 	}
 
+    $match_tags = array();
+    foreach ($matches as $match)
+    {
+        $match_search = new Search($match);
+        $match_tags[] = $match_search->get_tags($auth);
+    }
+    var_dump($match_tags);
+
 	curl_close($ch_scrape);
+
+    echo microtime(true) - $start;
 ?>
