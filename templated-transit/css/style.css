@@ -1219,23 +1219,3 @@
 		.grid-demo .row.flush > div:last-child span {
 			border-radius: 0 4px 4px 0;
 		}
-
-/*sketch online shit*/
-.container {
-    width: 600px;
-}
-.left {
-    max-width: 100%;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    -ms-text-overflow:ellipsis;
-    float: left;
-}
-.right {
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    -ms-text-overflow:ellipsis;
-    text-align: right;
-}
