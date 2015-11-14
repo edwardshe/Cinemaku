@@ -2,8 +2,7 @@
 class GImages {
 	private $results = array();
 	public function __construct($query) {
-		$url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q="
-		. urlencode($query);
+		$url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8&q=" . urlencode($query);
 		$ch = curl_init();
 
 		curl_setopt($ch, CURLOPT_URL, $url);
