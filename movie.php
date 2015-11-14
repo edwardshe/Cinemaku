@@ -25,7 +25,7 @@
 	if($status == 200)
 	{
 		preg_match_all('/<span class="tk-Resource-title">(.*)<\/span>/', $html, $matches);
-		$matches = array_slice($matches[0], 1, 5);
+		$matches = array_slice($matches[1], 1, 5);
 	}
 	else
 	{
