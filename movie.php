@@ -32,13 +32,15 @@
 		echo "Connection failed.";
 	}
 
-    $match_tags = array();
+    $results = array();
     foreach ($matches as $match)
     {
         $match_search = new Search($match);
-        $match_tags[] = $match_search->get_tags($auth);
+        $tags = $match_search->get_tags($auth);
+        $results[$match] = sizeof(array_intersect($query_tags, $tags));
     }
-    var_dump($match_tags);
+    arsort($results);
+    var_dump($results);
 
 	curl_close($ch_scrape);
 
