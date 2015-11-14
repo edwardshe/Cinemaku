@@ -42,7 +42,8 @@
         //$tags = $match_search->get_tags($auth);
         //$results[$match] = sizeof(array_intersect($query_tags, $tags));
     }
-    $tags_array = Clarifai::get_multi_tags($links, $auth);
+
+    $tags_array = Clarifai::get_unique_tags($links, $auth);
     $results = array();
     foreach (array_slice($tags_array, 1, 10) as $key => $tags) {
         $results[$key] = count(array_intersect($tags, $tags_array[$query_name]));

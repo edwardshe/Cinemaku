@@ -1,5 +1,30 @@
 <?php
-	class Clarifai {
+	interface ClarifaiInterface {
+		public static function get_unique_tags(array $url, $auth);
+		public static function get_multi_tags(array $url, $auth);
+		public static function get_tags($url, $auth);
+		public static function get_auth($client_id, $client_secret);
+	}
+
+	class Clarifai implements ClarifaiInterface {
+
+		public static function get_unique_tags(array $url, $auth) {
+			$tags_array = self::get_multi_tags($url, $auth);
+
+			$ret = array();
+			foreach($tags_array as $key => $tags) {
+				$unique_tags = array();
+				for($i = 0; $i < count($tags); $i++) {
+					foreach($tags[$i] as $tag) {
+						if(!in_array($tag, $unique_tags))
+							array_push($unique_tags, $tag);
+					}
+				}
+				$ret[$key] = $unique_tags;
+			}
+
+			return $ret;
+		}
 
 		public static function get_multi_tags(array $url, $auth) {
 			$mh = curl_multi_init();
@@ -29,7 +54,8 @@
 			foreach($url as $key => $links) {
 				$tags = array();
 				for($i = 0; $i < count($links); $i++) {
-					array_push($tags, json_decode(curl_multi_getcontent($ch[$key][$i]))->results[0]->result->tag->classes);
+					if(strcmp(json_decode(curl_multi_getcontent($ch[$key][$i]))->status_code, "OK") == 0)
+						array_push($tags, json_decode(curl_multi_getcontent($ch[$key][$i]))->results[0]->result->tag->classes);
 
 					//close the handles
 					curl_multi_remove_handle($mh, $ch[$key][$i]);
