@@ -21,8 +21,8 @@
 
 	if($status == 200)
 	{
-
-
+		preg_match_all('/<span class="tk-Resource-title">(.*)<\/span>/', $html, $matches);
+		var_dump($matches);
 	}
 	else
 	{
