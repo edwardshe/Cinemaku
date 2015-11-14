@@ -1,38 +1,33 @@
 <?php
 	require_once("pass.php");
+	require_once("Clarifai.php");
 
-	// create curl resource 
-    $ch = curl_init(); 
+    $auth = Clarifai::get_auth($client_id, $client_secret);
 
-    $data = array("grant_type" => "client_credentials");                                                                    
+    $tags = Clarifai::get_tags("http://images4.fanpop.com/image/photos/22300000/The-Social-Network-Stills-mark-and-eduardo-22324211-1280-850.jpg", $auth);
+    var_dump($tags);
 
-    // set url 
-    curl_setopt($ch, CURLOPT_URL, "https://" . $client_id . ":" . $client_secret . "@api.clarifai.com/v1/token/"); 
+	$ch_scrape = curl_init('https://www.tastekid.com/movies/like/Dog-Day-Afternoon');
+	curl_setopt($ch_scrape, CURLOPT_RETURNTRANSFER, true);
+	//curl_setopt(... other options you want...)
 
-    curl_setopt($ch, CURLOPT_POST, TRUE);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	$html = curl_exec($ch_scrape);
 
-    //return the transfer as a string 
-    //curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+	if (curl_error($ch_scrape))
+	    die(curl_error($ch_scrape));
 
-    // $output contains the output string 
-    $output = curl_exec($ch); 
+	// Get the status code
+	$status = curl_getinfo($ch_scrape, CURLINFO_HTTP_CODE);
+
+	if($status == 200)
+	{
 
 
-    $ch2 = curl_init();
-    $header = 'Authorization: Bearer ' . json_decode($output)->access_token;
+	}
+	else
+	{
+		echo "Connection failed.";
+	}
 
-    curl_setopt($ch2, CURLOPT_URL, "https://api.clarifai.com/v1/tag/?url=http://www.clarifai.com/img/metro-north.jpg"); 
-    curl_setopt($ch2, CURLOPT_HTTPHEADER, array(
-	    $header
-    ));
-    curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
-    $output2 = curl_exec($ch2); 
-
-    var_dump(json_decode($output2)->results[0]->result->tag->classes);
-
-    // close curl resource to free up system resources 
-    curl_close($ch);
-    curl_close($ch2);
+	curl_close($ch_scrape);
 ?>
