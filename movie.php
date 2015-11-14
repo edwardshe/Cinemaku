@@ -1,11 +1,27 @@
 <?php
 	require_once("pass.php");
 	require_once("Clarifai.php");
+    require_once("GImages.php");
 
     $auth = Clarifai::get_auth($client_id, $client_secret);
 
-    $tags = Clarifai::get_tags("http://images4.fanpop.com/image/photos/22300000/The-Social-Network-Stills-mark-and-eduardo-22324211-1280-850.jpg", $auth);
-    var_dump($tags);
+    $still_search = new GImages("The Social Network");
+    $still_urls = $still_search->get_links();
+
+    $query_tags = array();
+    foreach($still_urls as $still_url) {
+        $tags = Clarifai::get_tags($still_url, $auth);
+        if (is_array($tags)) {
+            foreach($tags as $tag) {
+                if (!in_array($tag, $query_tags))
+                {
+                    $query_tags[] = $tag;
+                }
+            }
+        }
+    }
+
+    var_dump($query_tags);
 
 	$ch_scrape = curl_init('https://www.tastekid.com/movies/like/Dog-Day-Afternoon');
 	curl_setopt($ch_scrape, CURLOPT_RETURNTRANSFER, true);
@@ -22,7 +38,7 @@
 	if($status == 200)
 	{
 		preg_match_all('/<span class="tk-Resource-title">(.*)<\/span>/', $html, $matches);
-		var_dump($matches);
+		//var_dump($matches);
 	}
 	else
 	{

@@ -13,7 +13,7 @@ class GImages {
 		$data = json_decode($body);
 
 		foreach ($data->responseData->results as $result) {
-		    $results[] = $result->url;
+		    $this->results[] = $result->url;
 		}
 	}
 
