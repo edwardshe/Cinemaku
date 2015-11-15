@@ -1,3 +1,12 @@
+<?php
+    require_once("Recommender.php");
+    if(isset($_GET['q'])) {
+    	$movies = $RecommenderController->get_top_recommendations($_GET['q']);
+    } else {
+    	header("Location: index.html");
+    }
+?>
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -40,12 +49,15 @@
 						<p>Recommendations are based on visual analysis and comparison of your movie to related films</p>
 					</header>
 						<ol>
-							<li>
-								<div class="container">
-    								<div class="left">Step Brothers<br> <font size="2">Best movie ever!</font></div>
-   									<div class="right"><img src="images/stepbrothers.jpg"></div>
-								</div>
-							</li>
+							<?php
+								foreach($movies as $movie) {
+									echo '<li>';
+									echo '<div class="container">';
+									echo '<div class="left">' . $movie . '</div>';
+									echo '</div>';
+									echo '</li>';
+								}
+							?>
 						</ol>
 				</div>
 			</section>
