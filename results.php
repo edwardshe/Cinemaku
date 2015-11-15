@@ -1,7 +1,7 @@
 <?php
     require_once("Recommender.php");
     if(isset($_GET['q'])) {
-    	$movies = $RecommenderController->get_top_recommendations($_GET['q']);
+    	$movies = $RecommenderController->get_top_recommendations($_GET['q'], 5);
     } else {
     	header("Location: index.html");
     }
@@ -33,8 +33,8 @@
 				<h1><a href="index.html">CINE<font color="orange">MAKU</font></a></h1>
 				<nav id="nav">
 					<ul>
-					<form method="get" action="" align="right">
-					<input type="text" name="	q" alt="Search" placeholder="Try another search" maxlength="256" size="32" style="width: 300px;"/>
+					<form method="get" action="results.php" align="right">
+					<input type="text" name="q" alt="Search" placeholder="Try another search" maxlength="256" size="32" style="width: 300px;"/>
 					</form>
 					</ul>
 				</nav>
