@@ -36,7 +36,7 @@
 		    }
 		    arsort($results);
 		    
-		    return $results;
+		    return array_keys($results);
 		}
 
 		private function get_initial_recommendations($query_name, $number) {
@@ -56,7 +56,7 @@
 				preg_match('/Sorry, I haven\'t heard of/', $html, $test);
 				if(count($test) > 0)
 					return array();
-				
+
 				preg_match_all('/<span class="tk-Resource-title">(.*)<\/span>/', $html, $matches);
 				if($number >= count($matches[1]))
 					$matches = $matches[1];
