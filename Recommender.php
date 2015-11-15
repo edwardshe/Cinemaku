@@ -13,10 +13,13 @@
 	    public function get_top_recommendations($query_name, $number) {
 		    $auth = Clarifai::get_auth($this->client_id, $this->client_secret);
 
-		    $query = new Search($query_name);
-		    $query_links = $query->get_links(); // Get links to query stills using Google Images API
 		    $matches = $this->get_initial_recommendations($query_name, $number); // Get initial recommended movies
 		    $number = count($matches);
+		    if($number <= 0)
+		    	return NULL;
+
+		    $query = new Search($query_name);
+		    $query_links = $query->get_links(); // Get links to query stills using Google Images API
 
 		    $links = array();
 		    $links[$query_name] = $query_links; // Array containing links
@@ -50,6 +53,10 @@
 
 			if($status == 200)
 			{
+				preg_match('/Sorry, I haven\'t heard of/', $html, $test);
+				if(count($test) > 0)
+					return array();
+				
 				preg_match_all('/<span class="tk-Resource-title">(.*)<\/span>/', $html, $matches);
 				if($number >= count($matches[1]))
 					$matches = $matches[1];
@@ -58,7 +65,7 @@
 			}
 			else
 			{
-				echo "Connection failed.";
+				return array();
 			}
 
 			curl_close($ch_scrape);
